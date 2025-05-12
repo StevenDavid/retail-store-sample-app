@@ -19,3 +19,44 @@ variable "container_image_overrides" {
   description = "Object that encapsulates any overrides to default values"
 }
 
+# Datadog integration variables
+variable "enable_datadog" {
+  description = "Enable Datadog integration"
+  type        = bool
+  default     = true
+}
+
+variable "datadog_api_key" {
+  description = "Datadog API key"
+  type        = string
+  default     = "512f979095cfeb0374f45ad5c0446d04"
+  sensitive   = true
+}
+
+variable "datadog_integration_role_name" {
+  description = "Name of the Datadog integration IAM role"
+  type        = string
+  default     = "DatadogIntegrationRole"
+}
+
+variable "datadog_forwarder_lambda_arn" {
+  description = "ARN of the Datadog Forwarder Lambda function"
+  type        = string
+  # No default - this should be provided by the user when enable_datadog is true
+  default     = ""
+}
+
+# Datadog database monitoring variables
+variable "enable_database_monitoring" {
+  description = "Enable Datadog database monitoring"
+  type        = bool
+  default     = false
+}
+
+# Datadog database monitoring cluster
+variable "datadog_dbm_cluster_name" {
+  description = "Name of the ECS cluster for Datadog database monitoring"
+  type        = string
+  default     = "datadog-managed-dbm"
+}
+

@@ -79,3 +79,27 @@ variable "alb_target_group_arn" {
   default     = ""
   type        = string
 }
+
+variable "enable_datadog" {
+  description = "Enable Datadog integration"
+  type        = bool
+  default     = true
+}
+
+variable "datadog_api_key_arn" {
+  description = "ARN of the Datadog API key secret"
+  type        = string
+  default     = ""
+}
+
+variable "cpu" {
+  description = "The number of CPU units to reserve for the container"
+  type        = string
+  default     = "1024"
+}
+
+variable "memory" {
+  description = "The amount of memory (in MiB) to allow the container to use"
+  type        = string
+  default     = "2048"
+}

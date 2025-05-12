@@ -19,4 +19,12 @@ module "ui_service" {
     RETAIL_UI_ENDPOINTS_CHECKOUT = "http://${module.checkout_service.ecs_service_name}"
     RETAIL_UI_ENDPOINTS_ORDERS   = "http://${module.orders_service.ecs_service_name}"
   }
+  
+  additional_task_execution_role_iam_policy_arns = [ 
+    "arn:aws:iam::aws:policy/CloudWatchLogsReadOnlyAccess"
+  ]
+  
+  # Datadog configuration
+  enable_datadog     = local.datadog_enabled
+  datadog_api_key_arn = var.datadog_api_key_arn
 }

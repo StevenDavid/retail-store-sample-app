@@ -23,8 +23,12 @@ module "catalog_service" {
   }
 
   additional_task_execution_role_iam_policy_arns = [
-    aws_iam_policy.catalog_policy.arn
+    aws_iam_policy.catalog_policy.arn, "arn:aws:iam::aws:policy/CloudWatchLogsReadOnlyAccess"
   ]
+  
+  # Datadog configuration
+  enable_datadog     = local.datadog_enabled
+  datadog_api_key_arn = var.datadog_api_key_arn
 }
 
 data "aws_iam_policy_document" "catalog_db_secret" {
