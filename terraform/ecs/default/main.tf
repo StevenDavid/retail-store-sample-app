@@ -18,6 +18,7 @@ module "datadog" {
   
   environment_name = local.standard_environment_name
   datadog_api_key  = var.datadog_api_key
+  datadog_api_url  = var.datadog_api_url
   tags             = module.tags.result
   
   # Datadog integration role and forwarder configuration

@@ -60,3 +60,11 @@ variable "datadog_dbm_cluster_name" {
   default     = "datadog-managed-dbm"
 }
 
+
+variable "datadog_api_url" {
+  description = "Datadog API url for the provider"
+  type        = string
+  # No default - this should be provided by the user when enable_datadog is true
+  default     = "https://api.us5.datadoghq.com/"
+}
+

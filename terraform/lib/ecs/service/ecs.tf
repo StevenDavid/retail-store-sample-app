@@ -40,9 +40,13 @@ locals {
   # Define Datadog agent container if enabled
   datadog_container = var.enable_datadog ? jsonencode([{
     "name": "datadog-agent",
-    "image": "public.ecr.aws/datadog/agent:7",
+    "image": "public.ecr.aws/datadog/agent:latest",
     "essential": true,
     "environment": [
+      {
+        "name": "DD_ECS_TASK_COLLECTION_ENABLED",
+        "value": "true"
+      },    
       {
         "name": "DD_APM_ENABLED",
         "value": "true"

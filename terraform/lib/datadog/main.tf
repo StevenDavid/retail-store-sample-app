@@ -4,6 +4,13 @@ variable "aws_account" {
   default     = "643497387296"
 }
 
+variable "datadog_api_url" {
+  description = "Datadog API url for the provider"
+  type        = string
+  # No default - this should be provided by the user when enable_datadog is true
+  default     = ""
+}
+
 variable "aws_permission_list" {
   type    = set(string)
   default = [
@@ -299,7 +306,7 @@ data "aws_iam_policy_document" "datadog_aws_integration_assume_role" {
     actions = ["sts:AssumeRole"]
     principals {
       type        = "AWS"
-      identifiers = ["arn:aws:iam::643497387296:root"]
+      identifiers = ["arn:aws:iam::464622532012:root"]
     }
     condition {
       test     = "StringEquals"
