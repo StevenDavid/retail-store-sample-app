@@ -19,6 +19,7 @@ module "datadog" {
   environment_name = local.standard_environment_name
   datadog_api_key  = var.datadog_api_key
   datadog_api_url  = var.datadog_api_url
+  datadog_app_key  = var.datadog_app_key
   tags             = module.tags.result
   
   # Datadog integration role and forwarder configuration
@@ -98,4 +99,7 @@ module "retail_app_ecs" {
   enable_datadog           = var.enable_datadog
   datadog_api_key_arn      = var.enable_datadog ? module.datadog.datadog_api_key_arn : ""
   datadog_forwarder_lambda_arn = var.enable_datadog ? var.datadog_forwarder_lambda_arn : ""
+  datadog_api_key  = var.enable_datadog ? var.datadog_api_key : ""
+  datadog_DD_SITE = var.enable_datadog ? var.datadog_DD_SITE : ""
+  datadog_firelens_host = var.enable_datadog ? var.datadog_firelens_host : ""
 }

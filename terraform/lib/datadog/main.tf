@@ -1,8 +1,14 @@
-variable "aws_account" {
-  description = "The AWS account ID"
-  type        = string
-  default     = "643497387296"
+data "aws_caller_identity" "current" {}
+
+locals {
+    aws_account_id = data.aws_caller_identity.current.account_id
 }
+
+#variable "aws_account" {
+#  description = "The AWS account ID"
+#  type        = string
+#  default     = "643497387296"
+#}
 
 variable "datadog_api_url" {
   description = "Datadog API url for the provider"
@@ -248,6 +254,12 @@ variable "datadog_api_key" {
   sensitive   = true
 }
 
+variable "datadog_app_key" {
+  description = "Datadog Application key from your datadog account"
+  type        = string
+  sensitive   = true
+}
+
 variable "tags" {
   description = "Tags to apply to resources"
   type        = map(string)
@@ -300,6 +312,7 @@ output "datadog_api_key_arn" {
 
 
 #AWS integrations code
+# don't change arn:aws:iam::464622532012:root this is the Datadog owned account you are integrating with, not your account ID
 #==================================================
 data "aws_iam_policy_document" "datadog_aws_integration_assume_role" {
   statement {
@@ -345,7 +358,7 @@ resource "aws_iam_role_policy_attachment" "datadog_aws_integration_security_audi
 
 resource "datadog_integration_aws_account" "datadog_integration" {
   account_tags   = []
-  aws_account_id = "${var.aws_account}"
+  aws_account_id = "${local.aws_account_id}"
   aws_partition  = "aws"
   aws_regions {
     include_all = true

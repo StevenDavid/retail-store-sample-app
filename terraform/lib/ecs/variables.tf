@@ -138,8 +138,24 @@ variable "datadog_api_key_arn" {
   default     = ""
 }
 
+variable "datadog_api_key" {
+  description = "Datadog API key"
+  type        = string
+  default     = ""
+}
+
 variable "datadog_forwarder_lambda_arn" {
   description = "ARN of the Datadog Forwarder Lambda function"
   type        = string
   default     = ""
+}
+
+variable "datadog_DD_SITE" {
+  description = "Datadog DD_SITE (for US5 its us5.datadoghq.com) which changes based on your Datadog account (see https://docs.datadoghq.com/logs/log_collection/)"
+  type        = string
+}
+
+variable "datadog_firelens_host" {
+  description = "Datadog LogDriver firelens Host (for US5 its http-intake.logs.us5.datadoghq.com) which changes based on your Datadog account (see https://docs.datadoghq.com/logs/log_collection/)"
+  type        = string
 }

@@ -27,4 +27,7 @@ module "ui_service" {
   # Datadog configuration
   enable_datadog     = local.datadog_enabled
   datadog_api_key_arn = var.datadog_api_key_arn
+  datadog_api_key = var.datadog_api_key
+  datadog_DD_SITE = var.datadog_DD_SITE
+  datadog_firelens_host =var.datadog_firelens_host
 }

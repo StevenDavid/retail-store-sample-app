@@ -26,13 +26,6 @@ variable "enable_datadog" {
   default     = true
 }
 
-variable "datadog_api_key" {
-  description = "Datadog API key"
-  type        = string
-  default     = "512f979095cfeb0374f45ad5c0446d04"
-  sensitive   = true
-}
-
 variable "datadog_integration_role_name" {
   description = "Name of the Datadog integration IAM role"
   type        = string
@@ -60,11 +53,31 @@ variable "datadog_dbm_cluster_name" {
   default     = "datadog-managed-dbm"
 }
 
+variable "datadog_api_key" {
+  description = "Datadog API key from your datadog account"
+  type        = string
+  nullable    = false
+}
 
 variable "datadog_api_url" {
-  description = "Datadog API url for the provider"
+  description = "Datadog API url for the provider (for US5 its https://api.us5.datadoghq.com/)"
   type        = string
-  # No default - this should be provided by the user when enable_datadog is true
-  default     = "https://api.us5.datadoghq.com/"
 }
+
+variable "datadog_app_key" {
+  description = "Datadog Application Key from your datadog account"
+  type        = string
+  nullable    = false
+}
+
+variable "datadog_DD_SITE" {
+  description = "Datadog DD_SITE (for US5 its us5.datadoghq.com) which changes based on your Datadog account (see https://docs.datadoghq.com/logs/log_collection/)"
+  type        = string
+}
+
+variable "datadog_firelens_host" {
+  description = "Datadog LogDriver firelens Host (for US5 its http-intake.logs.us5.datadoghq.com) which changes based on your Datadog account (see https://docs.datadoghq.com/logs/log_collection/)"
+  type        = string
+}
+
 

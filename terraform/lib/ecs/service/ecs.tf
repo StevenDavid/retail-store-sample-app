@@ -57,7 +57,7 @@ locals {
       },
       {
         "name": "DD_SITE",
-        "value": "us5.datadoghq.com"
+        "value": "${var.datadog_DD_SITE}"
       },
       {
         "name": "DD_APM_NON_LOCAL_TRAFFIC",
@@ -148,8 +148,8 @@ resource "aws_ecs_task_definition" "this" {
           "logDriver": "awsfirelens",
           "options": {
             "Name": "datadog",
-            "Host": "http-intake.logs.us5.datadoghq.com",
-            "apikey": "512f979095cfeb0374f45ad5c0446d04",
+            "Host": "${var.datadog_firelens_host}",
+            "apikey": "${var.datadog_api_key}",
             "dd_service": "${var.service_name}",
             "dd_source": "ecs",
             "dd_tags": "env:${var.environment_name},service:${var.service_name}",
