@@ -94,6 +94,13 @@ locals {
         "valueFrom": var.datadog_api_key_arn
       }
     ],
+    "healthCheck": {
+      "retries": 3,
+      "command": ["CMD-SHELL","agent health"],
+      "timeout": 5,
+      "interval": 30,
+      "startPeriod": 15
+    },
     "logConfiguration": {
       "logDriver": "awslogs",
       "options": {
@@ -156,7 +163,7 @@ resource "aws_ecs_task_definition" "this" {
             "TLS": "on",
             "provider": "ecs"
         },
-          "dependsOn": ${var.enable_datadog ? "[{\"containerName\": \"datadog-agent\", \"condition\": \"START\"}]" : "[]"}
+          "dependsOn": ${var.enable_datadog ? "[{\"containerName\": \"datadog-agent\", \"condition\": \"HEALTHY\"}]" : "[]"}
       }
     }
     ${var.enable_datadog ? ",${substr(local.datadog_container, 1, length(local.datadog_container) - 2)}" : ""}

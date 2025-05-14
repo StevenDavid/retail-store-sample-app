@@ -4,12 +4,6 @@ locals {
     aws_account_id = data.aws_caller_identity.current.account_id
 }
 
-#variable "aws_account" {
-#  description = "The AWS account ID"
-#  type        = string
-#  default     = "643497387296"
-#}
-
 variable "datadog_api_url" {
   description = "Datadog API url for the provider"
   type        = string
