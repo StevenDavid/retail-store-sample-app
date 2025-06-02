@@ -1,0 +1,23 @@
+https://app.artillery.io/o6uqr1c1le7xv/load-tests/tnkdj_mfj8c37hbzknp7wrdxnd6446zrbkh_76rh
+
+ artillery run test.yml --record --key a9_67ydsvnspuqzdj7pdvh5jrqkvxtkq71t
+
+export ARTILLERY_CLOUD_API_KEY=zda9_67ydsvnspuqzdj7pdvh5jrqkvxtkq71t
+
+
+npx artillery run retail-store-test.ts --record
+
+npx artillery run retail-store-test.yml --record
+
+npx artillery run-fargate retail-store-test.yml --record
+
+
+artillery run-fargate retail-store-test.yml \
+  --region us-east-1 \
+  --count 10
+  --launch-config '{"cpu": 4096, "memory": 8192}' \
+  --record
+
+artillery run-fargate ./tests/retail-store-test.yml --region us-east-1 --count 10 --record
+
+artillery run-fargate ./tests/retail-store-test.yml --count 10

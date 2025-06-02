@@ -1,0 +1,29 @@
+config:
+  # This is a test server run by team Artillery
+  # It's designed to be highly scalable
+  target: http://retail-store-ecs-socrates-ui-1807770987.us-east-1.elb.amazonaws.com
+  phases:
+    - duration: 60
+      arrivalRate: 1
+      rampTo: 5
+      name: Warm up phase
+    - duration: 60
+      arrivalRate: 5
+      rampTo: 10
+      name: Ramp up load
+    - duration: 10
+      arrivalRate: 10
+      rampTo: 30
+      name: Spike phase
+  engines:
+      playwright: {}
+  processor: ./scripts/flows.js
+  plugins:
+    ensure:
+      thresholds:
+        - http.response_time.p99: 4700
+        - http.response_time.p95: 4100
+scenarios:
+  - name: "Retail Store Basic Workflow"
+    engine: playwright
+    flowFunction: "retailStoreBasicWF"
