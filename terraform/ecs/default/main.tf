@@ -27,10 +27,10 @@ module "datadog" {
   datadog_forwarder_lambda_arn  = var.datadog_forwarder_lambda_arn
   
   # Database monitoring configuration
-  enable_database_monitoring = var.enable_database_monitoring
-  vpc_id                     = module.vpc.inner.vpc_id
-  subnet_ids                 = module.vpc.inner.private_subnets
-  ecs_cluster_arn            = var.enable_database_monitoring ? aws_ecs_cluster.datadog_dbm[0].arn : ""
+  # enable_database_monitoring = var.enable_database_monitoring
+  # vpc_id                     = module.vpc.inner.vpc_id
+  # subnet_ids                 = module.vpc.inner.private_subnets
+  # ecs_cluster_arn            = var.enable_database_monitoring ? aws_ecs_cluster.datadog_dbm[0].arn : ""
   
   # Catalog database configuration
   catalog_db_endpoint        = module.dependencies.catalog_db_endpoint
