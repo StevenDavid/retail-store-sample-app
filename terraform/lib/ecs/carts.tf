@@ -27,4 +27,9 @@ module "carts_service" {
   datadog_api_key = var.datadog_api_key
   datadog_DD_SITE = var.datadog_DD_SITE
   datadog_firelens_host =var.datadog_firelens_host
+  
+  #moving Observability Config out of the lib. placeholder.service_name
+  firelens_container = replace(var.firelens_container, "placeholder.cloudwatch_logs_group_id", aws_cloudwatch_log_group.ecs_tasks.id)
+  log_config = replace(var.log_config, "placeholder.service_name", "carts")
+  datadog_container = replace(var.datadog_container, "placeholder.cloudwatch_logs_group_id", aws_cloudwatch_log_group.ecs_tasks.id)
 }

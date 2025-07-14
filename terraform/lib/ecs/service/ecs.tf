@@ -12,111 +12,6 @@ locals {
     "valueFrom" : v
   }])
   
- 
-  # FireLens container definition
-  firelens_container = var.enable_datadog ? jsonencode([{
-    "essential": true,
-    "image": "amazon/aws-for-fluent-bit:latest",
-    "name": "log_router",
-    "firelensConfiguration": {
-      "type": "fluentbit",
-      "options": {
-        "enable-ecs-log-metadata": "true"
-      }
-    },
-    "logConfiguration": {
-      "logDriver": "awslogs",
-      "options": {
-        "awslogs-group": "${var.cloudwatch_logs_group_id}",
-        "awslogs-region": "${data.aws_region.current.name}",
-        "awslogs-stream-prefix": "firelens"
-      }
-    },
-    memoryReservation = 50
-  }]) : "[]"
-  
-
-  
-  # Define Datadog agent container if enabled
-  datadog_container = var.enable_datadog ? jsonencode([{
-    "name": "datadog-agent",
-    "image": "public.ecr.aws/datadog/agent:latest",
-    "essential": true,
-    "environment": [
-      {
-        "name": "DD_ECS_TASK_COLLECTION_ENABLED",
-        "value": "true"
-      },    
-      {
-        "name": "DD_APM_ENABLED",
-        "value": "true"
-      },    
-      {
-        "name": "DD_EC2_PREFER_IMDSV2",
-        "value": "false"
-      },
-      {
-        "name": "DD_SITE",
-        "value": "${var.datadog_DD_SITE}"
-      },
-      {
-        "name": "DD_APM_NON_LOCAL_TRAFFIC",
-        "value": "true"
-      },
-      {
-        "name": "DD_LOGS_ENABLED",
-        "value": "true"
-      },
-      {
-        "name": "DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL",
-        "value": "true"
-      },
-      {
-        "name": "DD_PROCESS_AGENT_ENABLED",
-        "value": "true"
-      },
-      {
-        "name": "DD_DOCKER_LABELS_AS_TAGS",
-        "value": "{\"com.amazonaws.ecs.task-definition-family\":\"service_name\"}"
-      },
-      {
-        "name": "DD_TAGS",
-        "value": "env:${var.environment_name} service:${var.service_name}"
-      },
-      {
-        "name": "ECS_FARGATE",
-        "value": "true"
-      }
-    ],
-    "secrets": [
-      {
-        "name": "DD_API_KEY",
-        "valueFrom": var.datadog_api_key_arn
-      }
-    ],
-    "healthCheck": {
-      "retries": 3,
-      "command": ["CMD-SHELL","agent health"],
-      "timeout": 5,
-      "interval": 30,
-      "startPeriod": 15
-    },
-    "logConfiguration": {
-      "logDriver": "awslogs",
-      "options": {
-        "awslogs-group": "${var.cloudwatch_logs_group_id}",
-        "awslogs-region": "${data.aws_region.current.name}",
-        "awslogs-stream-prefix": "${var.service_name}-datadog-agent"
-      }
-    },
-    "portMappings": [
-      {
-        "containerPort": 8126,
-        "hostPort": 8126,
-        "protocol": "tcp"
-      }
-    ]
-  }]) : "[]"
 }
 
 data "aws_region" "current" {}
@@ -151,23 +46,11 @@ resource "aws_ecs_task_definition" "this" {
           "retries": 3,
           "timeout": 5
         },
-        "logConfiguration": {
-          "logDriver": "awsfirelens",
-          "options": {
-            "Name": "datadog",
-            "Host": "${var.datadog_firelens_host}",
-            "apikey": "${var.datadog_api_key}",
-            "dd_service": "${var.service_name}",
-            "dd_source": "ecs",
-            "dd_tags": "env:${var.environment_name},service:${var.service_name}",
-            "TLS": "on",
-            "provider": "ecs"
-        },
-          "dependsOn": ${var.enable_datadog ? "[{\"containerName\": \"datadog-agent\", \"condition\": \"HEALTHY\"}]" : "[]"}
-      }
+        "logConfiguration": ${var.enable_datadog ? "${substr(var.log_config, 1, length(var.log_config) - 2)}," : "{},"}
+        "dependsOn": ${var.enable_datadog ? "[{\"containerName\": \"datadog-agent\", \"condition\": \"HEALTHY\"}]" : "[]"}
     }
-    ${var.enable_datadog ? ",${substr(local.datadog_container, 1, length(local.datadog_container) - 2)}" : ""}
-    ${var.enable_datadog ? ",${substr(local.firelens_container, 1, length(local.firelens_container) - 2)}" : ""}
+    ${var.enable_datadog ? ",${substr(var.datadog_container, 1, length(var.datadog_container) - 2)}" : ""}
+    ${var.enable_datadog ? ",${substr(var.firelens_container, 1, length(var.firelens_container) - 2)}" : ""}
   ]
   DEFINITION
   requires_compatibilities = ["FARGATE"]

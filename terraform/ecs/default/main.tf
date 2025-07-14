@@ -1,3 +1,5 @@
+data "aws_region" "current" {}
+
 module "tags" {
   source = "../../lib/tags"
 
@@ -14,7 +16,7 @@ module "vpc" {
 
 module "datadog" {
   #count  = var.enable_datadog ? 1 : 0
-  source = "../../lib/datadog"
+  source = "./lib/datadog"
   
   environment_name = local.standard_environment_name
   datadog_api_key  = var.datadog_api_key
@@ -25,13 +27,7 @@ module "datadog" {
   # Datadog integration role and forwarder configuration
   datadog_integration_role_name = var.datadog_integration_role_name
   datadog_forwarder_lambda_arn  = var.datadog_forwarder_lambda_arn
-  
-  # Database monitoring configuration
-  # enable_database_monitoring = var.enable_database_monitoring
-  # vpc_id                     = module.vpc.inner.vpc_id
-  # subnet_ids                 = module.vpc.inner.private_subnets
-  # ecs_cluster_arn            = var.enable_database_monitoring ? aws_ecs_cluster.datadog_dbm[0].arn : ""
-  
+
   # Catalog database configuration
   catalog_db_endpoint        = module.dependencies.catalog_db_endpoint
   catalog_db_port            = module.dependencies.catalog_db_port
@@ -102,4 +98,122 @@ module "retail_app_ecs" {
   datadog_api_key  = var.enable_datadog ? var.datadog_api_key : ""
   datadog_DD_SITE = var.enable_datadog ? var.datadog_DD_SITE : ""
   datadog_firelens_host = var.enable_datadog ? var.datadog_firelens_host : ""
+  
+    # FireLens container definition
+  firelens_container = jsonencode([{
+    "essential": true,
+    "image": "amazon/aws-for-fluent-bit:latest",
+    "name": "log_router",
+    "firelensConfiguration": {
+      "type": "fluentbit",
+      "options": {
+        "enable-ecs-log-metadata": "true"
+      }
+    },
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "placeholder.cloudwatch_logs_group_id",
+        "awslogs-region": "${data.aws_region.current.name}",
+        "awslogs-stream-prefix": "firelens"
+      }
+    },
+    memoryReservation = 50
+  }])
+ 
+  # Main Container log configuration: typically either firelens or Cloudwatch
+  log_config = var.enable_datadog ? jsonencode([{
+          "logDriver": "awsfirelens",
+          "options": {
+            "Name": "datadog",
+            "Host": "${var.datadog_firelens_host}",
+            "apikey": "${var.datadog_api_key}",
+            "dd_service": "placeholder.service_name",
+            "dd_source": "ecs",
+            "dd_tags": "env:${var.environment_name},service:placeholder.service_name",
+            "TLS": "on",
+            "provider": "ecs"
+        }
+  }]) : "[]"
+  
+  
+  # Define Datadog agent container if enabled
+  datadog_container = var.enable_datadog ? jsonencode([{
+    "name": "datadog-agent",
+    "image": "public.ecr.aws/datadog/agent:latest",
+    "essential": true,
+    "environment": [
+      {
+        "name": "DD_ECS_TASK_COLLECTION_ENABLED",
+        "value": "true"
+      },    
+      {
+        "name": "DD_APM_ENABLED",
+        "value": "true"
+      },    
+      {
+        "name": "DD_EC2_PREFER_IMDSV2",
+        "value": "false"
+      },
+      {
+        "name": "DD_SITE",
+        "value": "${var.datadog_DD_SITE}"
+      },
+      {
+        "name": "DD_APM_NON_LOCAL_TRAFFIC",
+        "value": "true"
+      },
+      {
+        "name": "DD_LOGS_ENABLED",
+        "value": "true"
+      },
+      {
+        "name": "DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL",
+        "value": "true"
+      },
+      {
+        "name": "DD_PROCESS_AGENT_ENABLED",
+        "value": "true"
+      },
+      {
+        "name": "DD_DOCKER_LABELS_AS_TAGS",
+        "value": "{\"com.amazonaws.ecs.task-definition-family\":\"service_name\"}"
+      },
+      {
+        "name": "DD_TAGS",
+        "value": "env:${var.environment_name} service:placeholder.service_name"
+      },
+      {
+        "name": "DD_API_KEY",
+        "value": "${var.datadog_api_key}"
+      },
+      {
+        "name": "ECS_FARGATE",
+        "value": "true"
+      }
+    ],
+    "healthCheck": {
+      "retries": 3,
+      "command": ["CMD-SHELL","agent health"],
+      "timeout": 5,
+      "interval": 30,
+      "startPeriod": 15
+    },
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "placeholder.cloudwatch_logs_group_id",
+        "awslogs-region": "${data.aws_region.current.name}",
+        "awslogs-stream-prefix": "datadog-agent"
+      }
+    },
+    "portMappings": [
+      {
+        "containerPort": 8126,
+        "hostPort": 8126,
+        "protocol": "tcp"
+      }
+    ]
+  }]) : "[]"
+  
 }

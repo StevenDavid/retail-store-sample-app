@@ -159,3 +159,19 @@ variable "datadog_firelens_host" {
   description = "Datadog LogDriver firelens Host (for US5 its http-intake.logs.us5.datadoghq.com) which changes based on your Datadog account (see https://docs.datadoghq.com/logs/log_collection/)"
   type        = string
 }
+
+
+variable "firelens_container" {
+  description = "ECS task code for the firelens container"
+  type        = string
+}
+
+variable "log_config" {
+  description = "ECS task code for the ehre to log for the main container"
+  type        = string
+}
+
+variable "datadog_container" {
+  description = "ECS task code for the Observability agent"
+  type        = string
+}
