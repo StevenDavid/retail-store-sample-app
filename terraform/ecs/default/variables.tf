@@ -32,13 +32,6 @@ variable "datadog_integration_role_name" {
   default     = "DatadogIntegrationRole"
 }
 
-variable "datadog_forwarder_lambda_arn" {
-  description = "ARN of the Datadog Forwarder Lambda function"
-  type        = string
-  # No default - this should be provided by the user when enable_datadog is true
-  default     = ""
-}
-
 # Datadog database monitoring variables
 variable "enable_database_monitoring" {
   description = "Enable Datadog database monitoring"

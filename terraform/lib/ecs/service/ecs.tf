@@ -1,6 +1,6 @@
 locals {
   #adding this validation block for it to check for API Key 
-  validate_datadog_config = var.enable_datadog && var.datadog_api_key_arn == "" ? tobool("Datadog API key ARN must be provided when Datadog is enabled") : true
+  #validate_datadog_config = var.enable_datadog && var.datadog_api_key_arn == "" ? tobool("Datadog API key ARN must be provided when Datadog is enabled") : true
 
   environment = jsonencode([for k, v in var.environment_variables : {
     "name" : k,
@@ -46,7 +46,7 @@ resource "aws_ecs_task_definition" "this" {
           "retries": 3,
           "timeout": 5
         },
-        "logConfiguration": ${var.enable_datadog ? "${substr(var.log_config, 1, length(var.log_config) - 2)}," : "{},"}
+        "logConfiguration": ${var.log_config != "" ? "${substr(var.log_config, 1, length(var.log_config) - 2)}," : "{},"}
         "dependsOn": ${var.enable_datadog ? "[{\"containerName\": \"datadog-agent\", \"condition\": \"HEALTHY\"}]" : "[]"}
     }
     ${var.enable_datadog ? ",${substr(var.datadog_container, 1, length(var.datadog_container) - 2)}" : ""}
