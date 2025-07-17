@@ -1,6 +1,6 @@
 locals {
   # Datadog configuration
-  datadog_enabled = var.enable_datadog != ""
+  enable_observ = var.enable_observ != ""
 }
 
 module "container_images" {

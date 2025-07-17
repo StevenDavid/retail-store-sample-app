@@ -20,7 +20,6 @@ module "vpc" {
 }
 
 module "datadog" {
-  #count  = var.enable_datadog ? 1 : 0
   source = "./lib/datadog"
   
   environment_name = local.standard_environment_name
@@ -96,12 +95,7 @@ module "retail_app_ecs" {
   mq_password = module.dependencies.mq_password
 
   # Datadog configuration
-  enable_datadog           = var.enable_datadog
-  # datadog_api_key_arn      = var.enable_datadog ? module.datadog.datadog_api_key_arn : ""
-  # datadog_forwarder_lambda_arn = var.enable_datadog ? var.datadog_forwarder_lambda_arn : ""
-  # datadog_api_key  = var.enable_datadog ? var.datadog_api_key : ""
-  # datadog_DD_SITE = var.enable_datadog ? var.datadog_DD_SITE : ""
-  # datadog_firelens_host = var.enable_datadog ? var.datadog_firelens_host : ""
+  enable_observ           = var.enable_observ
   
     # FireLens container definition
   firelens_container = jsonencode([{
@@ -126,7 +120,7 @@ module "retail_app_ecs" {
   }])
  
   # Main Container log configuration: typically either firelens or Cloudwatch
-  log_config = var.enable_datadog ? jsonencode([{
+  log_config = jsonencode([{
           "logDriver": "awsfirelens",
           "options": {
             "Name": "datadog",
@@ -138,11 +132,11 @@ module "retail_app_ecs" {
             "TLS": "on",
             "provider": "ecs"
         }
-  }]) : "[]"
+  }])
   
   
   # Define Datadog agent container if enabled
-  datadog_container = var.enable_datadog ? jsonencode([{
+  observ_container = jsonencode([{
     "name": "datadog-agent",
     "image": "public.ecr.aws/datadog/agent:latest",
     "essential": true,
@@ -218,7 +212,7 @@ module "retail_app_ecs" {
         "protocol": "tcp"
       }
     ]
-  }]) : "[]"
+  }])
   
 }
 

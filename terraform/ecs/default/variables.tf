@@ -20,8 +20,8 @@ variable "container_image_overrides" {
 }
 
 # Datadog integration variables
-variable "enable_datadog" {
-  description = "Enable Datadog integration"
+variable "enable_observ" {
+  description = "Enable Observability integration (such as datadog or CloudWatch)"
   type        = bool
   default     = true
 }

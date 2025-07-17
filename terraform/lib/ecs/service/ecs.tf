@@ -47,10 +47,10 @@ resource "aws_ecs_task_definition" "this" {
           "timeout": 5
         },
         "logConfiguration": ${var.log_config != "" ? "${substr(var.log_config, 1, length(var.log_config) - 2)}," : "{},"}
-        "dependsOn": ${var.enable_datadog ? "[{\"containerName\": \"datadog-agent\", \"condition\": \"HEALTHY\"}]" : "[]"}
+        "dependsOn": ${var.enable_observ ? "[{\"containerName\": \"datadog-agent\", \"condition\": \"HEALTHY\"}]" : "[]"}
     }
-    ${var.enable_datadog ? ",${substr(var.datadog_container, 1, length(var.datadog_container) - 2)}" : ""}
-    ${var.enable_datadog ? ",${substr(var.firelens_container, 1, length(var.firelens_container) - 2)}" : ""}
+    ${var.enable_observ ? ",${substr(var.observ_container, 1, length(var.observ_container) - 2)}" : ""}
+    ${var.enable_observ ? ",${substr(var.firelens_container, 1, length(var.firelens_container) - 2)}" : ""}
   ]
   DEFINITION
   requires_compatibilities = ["FARGATE"]

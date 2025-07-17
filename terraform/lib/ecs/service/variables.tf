@@ -80,7 +80,7 @@ variable "alb_target_group_arn" {
   type        = string
 }
 
-variable "enable_datadog" {
+variable "enable_observ" {
   description = "Enable Datadog integration"
   type        = bool
   default     = true
@@ -98,28 +98,6 @@ variable "memory" {
   default     = "2048"
 }
 
-#Datadog variables
-# variable "datadog_api_key_arn" {
-#   description = "ARN of the Datadog API key secret"
-#   type        = string
-#   default     = ""
-# }
-
-# variable "datadog_api_key" {
-#   description = "Datadog API key"
-#   type        = string
-# }
-
-# variable "datadog_DD_SITE" {
-#   description = "Datadog DD_SITE (for US5 its us5.datadoghq.com) which changes based on your Datadog account (see https://docs.datadoghq.com/logs/log_collection/)"
-#   type        = string
-# }
-
-# variable "datadog_firelens_host" {
-#   description = "Datadog LogDriver firelens Host (for US5 its http-intake.logs.us5.datadoghq.com) which changes based on your Datadog account (see https://docs.datadoghq.com/logs/log_collection/)"
-#   type        = string
-# }
-
 variable "firelens_container" {
   description = "ECS task code for the firelens container"
   type        = string
@@ -130,7 +108,7 @@ variable "log_config" {
   type        = string
 }
 
-variable "datadog_container" {
+variable "observ_container" {
   description = "ECS task code for the Observability agent"
   type        = string
 }

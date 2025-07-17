@@ -32,17 +32,13 @@ module "orders_service" {
     aws_iam_policy.orders_policy.arn, "arn:aws:iam::aws:policy/CloudWatchLogsReadOnlyAccess"
   ]
   
-  # Datadog configuration
-  enable_datadog     = local.datadog_enabled
-  # datadog_api_key_arn = var.datadog_api_key_arn
-  # datadog_api_key = var.datadog_api_key
-  # datadog_DD_SITE = var.datadog_DD_SITE
-  # datadog_firelens_host =var.datadog_firelens_host
+ # Observability configuration
+  enable_observ     = local.enable_observ
   
   #moving Observability Config out of the lib.
   firelens_container = replace(var.firelens_container, "placeholder.cloudwatch_logs_group_id", aws_cloudwatch_log_group.ecs_tasks.id)
   log_config = replace(var.log_config, "placeholder.service_name", "orders")
-  datadog_container = replace(var.datadog_container, "placeholder.cloudwatch_logs_group_id", aws_cloudwatch_log_group.ecs_tasks.id)
+  observ_container = replace(var.observ_container, "placeholder.cloudwatch_logs_group_id", aws_cloudwatch_log_group.ecs_tasks.id)
 }
 
 data "aws_iam_policy_document" "orders_db_secret" {

@@ -11,11 +11,11 @@ output "environment_name" {
 # Output the catalog database admin credentials ARN
 output "catalog_db_admin_creds_arn" {
   description = "ARN of the catalog database admin credentials secret"
-  value       = var.enable_database_monitoring && var.enable_datadog ? module.datadog[0].catalog_db_admin_creds_arn : ""
+  value       = var.enable_database_monitoring && var.enable_observ ? module.datadog[0].catalog_db_admin_creds_arn : ""
 }
 
 # Output the orders database admin credentials ARN
 output "orders_db_admin_creds_arn" {
   description = "ARN of the orders database admin credentials secret"
-  value       = var.enable_database_monitoring && var.enable_datadog ? module.datadog[0].orders_db_admin_creds_arn : ""
+  value       = var.enable_database_monitoring && var.enable_observ ? module.datadog[0].orders_db_admin_creds_arn : ""
 }
