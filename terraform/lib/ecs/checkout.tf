@@ -22,7 +22,8 @@ module "checkout_service" {
   ]
   
  # Observability configuration
-  enable_observ     = local.enable_observ
+  enable_observ     = var.enable_observ
+  observ_agent_name = var.observ_agent_name
   
   #moving Observability Config out of the lib.
   firelens_container = replace(var.firelens_container, "placeholder.cloudwatch_logs_group_id", aws_cloudwatch_log_group.ecs_tasks.id)

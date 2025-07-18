@@ -72,3 +72,9 @@ variable "datadog_firelens_host" {
   description = "Datadog LogDriver firelens Host (for US5 its http-intake.logs.us5.datadoghq.com) which changes based on your Datadog account (see https://docs.datadoghq.com/logs/log_collection/)"
   type        = string
 }
+
+
+variable "observ_agent_name" {
+  description = "Name of container agent for the observability sidecar"
+  type        = string
+}

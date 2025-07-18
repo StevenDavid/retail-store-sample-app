@@ -1,7 +1,4 @@
 locals {
-  #adding this validation block for it to check for API Key 
-  #validate_datadog_config = var.enable_datadog && var.datadog_api_key_arn == "" ? tobool("Datadog API key ARN must be provided when Datadog is enabled") : true
-
   environment = jsonencode([for k, v in var.environment_variables : {
     "name" : k,
     "value" : v
@@ -47,7 +44,7 @@ resource "aws_ecs_task_definition" "this" {
           "timeout": 5
         },
         "logConfiguration": ${var.log_config != "" ? "${substr(var.log_config, 1, length(var.log_config) - 2)}," : "{},"}
-        "dependsOn": ${var.enable_observ ? "[{\"containerName\": \"datadog-agent\", \"condition\": \"HEALTHY\"}]" : "[]"}
+        "dependsOn": ${var.enable_observ ? "[{\"containerName\": \"${var.observ_agent_name}\", \"condition\": \"HEALTHY\"}]" : "[]"}
     }
     ${var.enable_observ ? ",${substr(var.observ_container, 1, length(var.observ_container) - 2)}" : ""}
     ${var.enable_observ ? ",${substr(var.firelens_container, 1, length(var.firelens_container) - 2)}" : ""}

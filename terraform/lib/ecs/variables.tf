@@ -125,7 +125,7 @@ variable "mq_password" {
   description = "Password for the shared MQ"
 }
 
-# Datadog integration variables
+# Observability integration variables
 variable "enable_observ" {
   description = "Enable Observability integration"
   type        = bool
@@ -144,5 +144,10 @@ variable "log_config" {
 
 variable "observ_container" {
   description = "ECS task code for the Observability agent"
+  type        = string
+}
+
+variable "observ_agent_name" {
+  description = "Name of container agent for the observability sidecar"
   type        = string
 }

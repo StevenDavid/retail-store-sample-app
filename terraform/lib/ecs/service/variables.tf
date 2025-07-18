@@ -81,7 +81,7 @@ variable "alb_target_group_arn" {
 }
 
 variable "enable_observ" {
-  description = "Enable Datadog integration"
+  description = "Enable Observability integration"
   type        = bool
   default     = true
 }
@@ -110,5 +110,10 @@ variable "log_config" {
 
 variable "observ_container" {
   description = "ECS task code for the Observability agent"
+  type        = string
+}
+
+variable "observ_agent_name" {
+  description = "Name of container agent for the observability sidecar"
   type        = string
 }

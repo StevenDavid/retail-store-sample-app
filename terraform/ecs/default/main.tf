@@ -96,6 +96,7 @@ module "retail_app_ecs" {
 
   # Datadog configuration
   enable_observ           = var.enable_observ
+  observ_agent_name = var.observ_agent_name
   
     # FireLens container definition
   firelens_container = jsonencode([{
@@ -137,7 +138,7 @@ module "retail_app_ecs" {
   
   # Define Datadog agent container if enabled
   observ_container = jsonencode([{
-    "name": "datadog-agent",
+    "name": "${var.observ_agent_name}",
     "image": "public.ecr.aws/datadog/agent:latest",
     "essential": true,
     "environment": [

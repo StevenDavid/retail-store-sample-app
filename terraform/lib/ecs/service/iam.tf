@@ -14,27 +14,7 @@ data "aws_iam_policy_document" "assume_role_policy" {
   }
 }
 
-# Create a policy to allow access to Secrets Manager
-resource "aws_iam_policy" "secrets_manager_access" {
-  name        = "${var.environment_name}-${var.service_name}-secrets-access"
-  path        = "/"
-  description = "Policy to allow access to Secrets Manager for Datadog API key"
 
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "secretsmanager:GetSecretValue"
-        ]
-        Resource = [
-          "*"  # Allow access to all secrets for now to simplify deployment
-        ]
-      }
-    ]
-  })
-}
 
 # Create a policy for CloudWatch Logs access
 resource "aws_iam_policy" "cloudwatch_logs_access" {
@@ -61,12 +41,6 @@ resource "aws_iam_policy" "cloudwatch_logs_access" {
 resource "aws_iam_role_policy_attachment" "task_execution_role_policy" {
   role       = aws_iam_role.task_execution_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
-}
-
-# Attach the Secrets Manager access policy to the task execution role
-resource "aws_iam_role_policy_attachment" "secrets_manager_access" {
-  role       = aws_iam_role.task_execution_role.name
-  policy_arn = aws_iam_policy.secrets_manager_access.arn
 }
 
 # Attach the CloudWatch Logs access policy to the task execution role
@@ -123,11 +97,34 @@ resource "aws_iam_policy" "ecs_exec" {
 EOF
 }
 
-# Add a policy for Datadog Agent permissions
-resource "aws_iam_policy" "datadog_agent" {
-  name        = "${var.environment_name}-${var.service_name}-datadog-agent"
+
+# Create a policy to allow access to Secrets Manager - not using SecretsManger at this time
+resource "aws_iam_policy" "secrets_manager_access" {
+  name        = "${var.environment_name}-${var.service_name}-secrets-access"
   path        = "/"
-  description = "IAM policy for Datadog Agent"
+  description = "Policy to allow access to Secrets Manager for Observability agent"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue"
+        ]
+        Resource = [
+          "*"  # Allow access to all secrets for now to simplify deployment
+        ]
+      }
+    ]
+  })
+}
+
+# Add a policy for Observability Agent permissions
+resource "aws_iam_policy" "observ_agent" {
+  name        = "${var.environment_name}-${var.service_name}-observ-agent"
+  path        = "/"
+  description = "IAM policy for Observability Agent"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -145,10 +142,17 @@ resource "aws_iam_policy" "datadog_agent" {
   })
 }
 
-# Attach the Datadog Agent policy to the task role
-resource "aws_iam_role_policy_attachment" "datadog_agent" {
-  role       = aws_iam_role.task_role.name
-  policy_arn = aws_iam_policy.datadog_agent.arn
-}
+# Attach the Observability Agent policy to the task role
+ resource "aws_iam_role_policy_attachment" "observ_agent" {
+   role       = aws_iam_role.task_role.name
+   policy_arn = aws_iam_policy.observ_agent.arn
+ }
+
+# Attach the Secrets Manager access policy to the task execution role
+ resource "aws_iam_role_policy_attachment" "secrets_manager_access" {
+   role       = aws_iam_role.task_execution_role.name
+   policy_arn = aws_iam_policy.secrets_manager_access.arn
+ }
+
 
     
